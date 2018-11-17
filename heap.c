@@ -1,6 +1,10 @@
 #include "heap.h"
 
-#define TAMANIO_MINIMO 20 
+#define MAXIMO 0
+#define TAMANIO_MINIMO 20
+#define CONSTANTE_DE_AUMENTO 2
+#define CONSTANTE_DE_REDUCCION 2
+#define CONSTANTE_DE_CONTROL_CANTIDAD 4 
 
 struct heap{
 	void** datos;
@@ -23,6 +27,19 @@ heap_t *heap_crear(cmp_func_t cmp){
 	heap->capacidad = TAMANIO_MINIMO;
 	heap->cmp = cmp;
 	return heap;
+}
+
+
+bool redimensionar_heap(heap_t* heap, size_t tam_nuevo) {
+    if(tam_nuevo >= TAMANIO_MINIMO) {
+        void** datos_nuevos = realloc(heap->datos, tam_nuevo * sizeof(void*));
+        if(datos_nuevos != NULL){
+            heap->datos = datos_nuevos;
+            heap->capacidad = tam_nuevo;
+            return true;
+        }
+    }
+    return false;
 }
 
 void heap_swap(void** datos, size_t posicion_padre, size_t posicion){
@@ -75,6 +92,12 @@ void heap_upheap(void** datos, size_t posicion, cmp_func_t cmp){
 
 bool heap_encolar(heap_t *heap, void *elem){
 	//Agregar funcion de redimension
+    if(heap->cantidad == heap->capacidad) {
+        bool se_redimensiono_heap = redimensionar_heap(heap, heap->capacidad * CONSTANTE_DE_AUMENTO);
+        if (!se_redimensiono_heap) {
+            return false;
+		}
+    }
 
 	heap->datos[heap->cantidad] = elem;
 	heap_upheap(heap->datos, heap->cantidad, heap->cmp);
@@ -90,7 +113,9 @@ void* heap_desencolar(heap_t* heap){
 	heap_swap(heap->datos, 0, heap->cantidad-1);
 	heap->cantidad--;
 	heap_downheap(heap->datos, heap->cantidad, 0, heap->cmp);
-	//Agregar funcion de redimension
+	if(heap->cantidad > 0 && heap->cantidad < heap->capacidad/CONSTANTE_DE_CONTROL_CANTIDAD) {
+		redimensionar_heap(heap, heap->capacidad/CONSTANTE_DE_REDUCCION);
+	}
 	return dato;
 }
 

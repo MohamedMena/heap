@@ -11,9 +11,9 @@ int comparacion(const void* elemento_1, const void* elemento_2) {
 	int elem1= *(int*)elemento_1;
 	int elem2= *(int*)elemento_2;
 	
-	if(elem1 < elem2) {
+	if(elem1 > elem2) {
 		return 1;
-	}else if(elem1 > elem2) {
+	}else if(elem1 < elem2) {
 		return -1;
 	}
 	return 0;
@@ -45,15 +45,15 @@ static void pruebas_heap_encolo_y_desencolo(){
 	print_test("Creo el heap", heap != NULL);
 	print_test("Prueba heap encolo 7", heap_encolar(heap, &arreglo[0]));
 	print_test("Prueba heap cantidad de elementos 1", heap_cantidad(heap) == 1);
-	print_test("Prueba heap el maximo es 7", heap_ver_max(heap) == &arreglo[0]);
+	print_test("Prueba heap el maximo es 7", *(int*)heap_ver_max(heap) == 7);
 	print_test("Prueba heap no esta vacio, TRUE", !heap_esta_vacio(heap));
-	print_test("Prueba heap desencolo 7", heap_desencolar(heap) == &arreglo[0]);
+	print_test("Prueba heap desencolo 7", *(int*)heap_desencolar(heap) == 7);
 	print_test("Prueba heap encolo 25", heap_encolar(heap, &arreglo[3]));
-	print_test("Prueba heap desencolo 25", heap_desencolar(heap) == &arreglo[3]);
+	print_test("Prueba heap desencolo 25", *(int*)heap_desencolar(heap) == 25);
 	print_test("Prueba heap encolo 10", heap_encolar(heap, &arreglo[1]));
-	print_test("Prueba heap desencolo 10", heap_desencolar(heap) == &arreglo[1]);
+	print_test("Prueba heap desencolo 10", *(int*)heap_desencolar(heap) == 10);
 	print_test("Prueba heap encolo 15", heap_encolar(heap, &arreglo[2]));
-	print_test("Prueba heap desencolo 15", heap_desencolar(heap) == &arreglo[2]);
+	print_test("Prueba heap desencolo 15", *(int*)heap_desencolar(heap) == 15);
 	print_test("Prueba heap cantidad de elementos 0", heap_cantidad(heap) == 0);
 	
 	heap_destruir(heap, NULL);
@@ -75,7 +75,7 @@ static void pruebas_heap_encolo_varios_elementos(){
 	print_test("Prueba heap encolo todos los elmentos del arreglo", ok);
 	print_test("Prueba heap no esta vacio, TRUE", !heap_esta_vacio(heap));
 	print_test("Prueba heap cantidad de elementos 7", heap_cantidad(heap) == TAMANIO);
-	print_test("Prueba heap el maximo es 35", heap_ver_max(heap) == &arreglo[6]);
+	print_test("Prueba heap el maximo es 35", *(int*)heap_ver_max(heap) == 35);
 
 	heap_destruir(heap, NULL);
 	printf("\n");
@@ -87,9 +87,9 @@ static void pruebas_heap_encolo_varios_elementos2() {
 	
 	print_test("Prueba heap encolo 10", heap_encolar(heap, &arreglo[1]));
 	print_test("Prueba heap encolo 35", heap_encolar(heap, &arreglo[6]));
-	print_test("Prueba heap desencolo 35", heap_desencolar(heap) == &arreglo[6]);
+	print_test("Prueba heap desencolo 35", *(int*)heap_desencolar(heap) == 35);
 	print_test("Prueba heap encolo 8", heap_encolar(heap, &arreglo[4]));
-	print_test("Prueba heap desencolo 10", heap_desencolar(heap) == &arreglo[1]);
+	print_test("Prueba heap desencolo 10", *(int*)heap_desencolar(heap) == 10);
 	print_test("Prueba heap cantidad de elementos 1", heap_cantidad(heap) == 1);
 
 	heap_destruir(heap, NULL);
@@ -120,7 +120,7 @@ static void pruebas_heap_crear_array(){
 	
 	print_test("Prueba heap no esta vacio, TRUE", !heap_esta_vacio(heap));
 	print_test("Prueba heap cantidad de elementos 7", heap_cantidad(heap) == TAMANIO);
-	print_test("Prueba heap el maximo es Uruguay", heap_ver_max(heap) == clave5);
+	print_test("Prueba heap el maximo es Uruguay", strcmp(heap_ver_max(heap),clave5) == 0);
 
 	free(heap);
 	printf("\n");
@@ -132,7 +132,7 @@ static void pruebas_heap_crear_array2(){
 	void* array[TAMANIO];
 	
 	for(size_t i= 0; i < TAMANIO; i++) {
-		array[i]= arreglo+i;
+		array[i]= &arreglo[i];
 	}
 	
 	heap_t* heap= heap_crear_arr(array, TAMANIO, (cmp_func_t)comparacion);
@@ -141,7 +141,7 @@ static void pruebas_heap_crear_array2(){
 	
 	print_test("Prueba heap no esta vacio, TRUE", !heap_esta_vacio(heap));
 	print_test("Prueba heap cantidad de elementos 7", heap_cantidad(heap) == TAMANIO);
-	print_test("Prueba heap el maximo es 35", heap_ver_max(heap) == &arreglo[6]);
+	print_test("Prueba heap el maximo es 35", *((int*)heap_ver_max(heap)) == 35);
 
 	free(heap);
 	printf("\n");
@@ -165,6 +165,8 @@ static void prueba_heapsort(){
 	while(!heap_esta_vacio(heap)){
 		printf("%i ", *(int*)heap_desencolar(heap));
 	}
+
+	free(heap);
 
 }
 
@@ -192,17 +194,17 @@ void prueba_desencolar(){
 		array[i]= arreglo_dos+i;
 	}
 
-	heap_sort(array, TAMANIO, (cmp_func_t)comparacion);
+	heap_sort(array, 3, (cmp_func_t)comparacion);
 
 	printf("\nOrdenado:");
-	for(size_t i = 0; i < TAMANIO; i++){
+	for(size_t i = 0; i < 3; i++){
 		printf("%i ", *(int*)array[i]);
 	}
 	printf("\n");
 
 	heap= heap_crear_arr(array, 3, (cmp_func_t)comparacion);
 	
-	printf("\nArray de minimos\n");
+	printf("\nArray de maximos\n");
 	for(size_t i = 0; i < 3; i++){
 		printf("%i ", *(int*)array[i]);
 	}
@@ -211,7 +213,7 @@ void prueba_desencolar(){
 	print_test("Creo el heap", heap != NULL);
 	
 	print_test("Prueba heap no esta vacio, TRUE", !heap_esta_vacio(heap));
-	print_test("Prueba heap cantidad de elementos 7", heap_cantidad(heap) == 3);
+	print_test("Prueba heap cantidad de elementos 3", heap_cantidad(heap) == 3);
 	
 	while(!heap_esta_vacio(heap)){
 		printf("%i ", *(int*)heap_desencolar(heap));

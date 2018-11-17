@@ -33,19 +33,19 @@ void heap_swap(void** datos, size_t posicion_padre, size_t posicion){
 }
 
 void heap_downheap(void** datos, size_t tamanio, size_t posicion, cmp_func_t cmp){
-	if(posicion > tamanio) return;
+	if(posicion >= tamanio) return;
 
 	size_t hijo_izq = 2*posicion+1;
 	size_t hijo_der = 2*posicion+2;
 	size_t maximo = posicion;
 
 	if(hijo_izq < tamanio){
-		if(cmp(datos[posicion], datos[hijo_izq]) > 0)
+		if(cmp(datos[maximo], datos[hijo_izq]) < 0)
 			maximo = hijo_izq;
 	}
 
 	if(hijo_der < tamanio){
-		if(cmp(datos[posicion], datos[hijo_der]) > 0)
+		if(cmp(datos[maximo], datos[hijo_der]) < 0)
 			maximo = hijo_der;
 	}
 
@@ -66,7 +66,7 @@ void heap_upheap(void** datos, size_t posicion, cmp_func_t cmp){
 	if(posicion == 0) return;
 
 	size_t padre = (posicion-1)/2;
-	if(cmp(datos[padre], datos[posicion]) > 0){
+	if(cmp(datos[padre], datos[posicion]) < 0){
 		heap_swap(datos, padre, posicion);
 		return heap_upheap(datos, padre, cmp);
 	}
@@ -113,13 +113,14 @@ void heap_sort(void *elementos[], size_t cant, cmp_func_t cmp){
 
 	for(int i = cant-1; i > 0; i--){
 		heap_swap(elementos, 0, i);
-		heap_downheap(elementos, i-1, 0, cmp);
+		heap_downheap(elementos, i, 0, cmp);
 	}
 }
 
 
 heap_t* heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
-	heap_sort(arreglo, n, cmp);
+	//heap_sort(arreglo, n, cmp);
+	heapify(arreglo, n, cmp);
 	heap_t* heap = malloc(sizeof(heap_t));
 	if(!heap) return NULL;
 	heap->datos = arreglo;

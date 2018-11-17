@@ -162,9 +162,14 @@ static void prueba_heapsort(){
 	}
 	printf("\n");
 	heap_t* heap= heap_crear_arr(array, TAMANIO, (cmp_func_t)comparacion);
-	while(!heap_esta_vacio(heap)){
-		printf("%i ", *(int*)heap_desencolar(heap));
+/*
+	bool ok = true;
+	for(size_t i=0; i < TAMANIO; i++){
+		ok &= heap_desencolar(heap) == &array[i];
 	}
+
+	print_test("Se desencolaron correctamente", ok);
+	*/
 
 	free(heap);
 
@@ -214,10 +219,14 @@ void prueba_desencolar(){
 	
 	print_test("Prueba heap no esta vacio, TRUE", !heap_esta_vacio(heap));
 	print_test("Prueba heap cantidad de elementos 3", heap_cantidad(heap) == 3);
-	
-	while(!heap_esta_vacio(heap)){
-		printf("%i ", *(int*)heap_desencolar(heap));
+
+	//bool ok = true;
+	/*for(size_t i=0; i < 3; i++){
+		ok &= heap_desencolar(heap) == &array[i];
 	}
+
+	print_test("Se desencolaron correctamente", ok);
+	*/
 
 	free(heap);
 	printf("\n");
